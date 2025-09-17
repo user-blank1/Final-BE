@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/products", productRouter);
-
+app.use("/uploads", express.static("uploads"));
 async function seedAdmin() {
     const adminExists = await User.findOne({ username: "admin" });
     if (adminExists) {
