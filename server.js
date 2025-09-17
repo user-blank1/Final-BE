@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import authRouter from "./controller/userRoutes.js";
 import User from "./Models/User.js";
 import productRouter from "./controller/productRoutes.js";
+import { checkExpiredRentals } from "./controller/productController.js";
 dotenv.config();
 const app = express();
 
@@ -35,6 +36,7 @@ mongoose
         await seedAdmin();
         app.listen(3000);
         console.log("http://localhost:3000");
+        setInterval(checkExpiredRentals, 60 * 60 * 1000);
     })
     .catch((err) => {
         console.error("Database connection error:", err);

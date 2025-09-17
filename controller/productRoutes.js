@@ -3,6 +3,7 @@ import { product_post } from "../controller/productController.js";
 import { product_popular_get } from "../controller/productController.js";
 import { requireAuth } from "../middleware/authMiddleware.js";
 import { product_get } from "../controller/productController.js";
+import { product_rent_post } from "../controller/productController.js";
 import multer from "multer";
 
 const productRouter = Router();
@@ -20,5 +21,6 @@ const upload = multer({ storage });
 productRouter.get("/popular", requireAuth, product_popular_get);
 productRouter.get("/single/:title", requireAuth, product_get);
 productRouter.post("/", requireAuth, upload.single("productImage"), product_post);
+productRouter.post("/rent", requireAuth, product_rent_post);
 
 export default productRouter;

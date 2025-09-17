@@ -5,8 +5,10 @@ const productSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     imageUrl: { type: String, required: true },
     available: { type: Boolean, default: true },
-    rentedFor: { type: Number, default: 0 }, //number is number of days
+    rentedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+    rentedFor: { type: Number, default: 0 },
     popularity: { type: Number, default: 0 },
+    returnDate: { type: Date, default: null },
 });
 
 const Product = mongoose.model("Product", productSchema, "products");

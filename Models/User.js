@@ -5,6 +5,12 @@ const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: [true, "Username already exists"] },
     password: { type: String, required: true },
     role: { type: String, default: "user" },
+    rentedProducts: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product",
+        },
+    ],
 });
 userSchema.pre("save", async function (next) {
     const salt = await bcrypt.genSalt();
