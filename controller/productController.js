@@ -23,7 +23,7 @@ export async function product_post(req, res) {
 
 export async function product_popular_get(req, res) {
     try {
-        const products = await Product.find({ available: true }).sort({ popularity: -1 }).limit(3);
+        const products = await Product.find().sort({ popularity: -1 }).limit(3);
         res.status(200).json({ products });
     } catch (err) {
         res.status(500).json({ err });
@@ -54,6 +54,7 @@ export async function product_rent_post(req, res) {
         const returnDate = new Date();
         returnDate.setDate(returnDate.getDate() + parseInt(days));
         product.returnDate = returnDate;
+        product.popularity += 1;
         const user = (product.available = false);
         product.rentedBy = userId;
         product.rentedFor = days;
@@ -82,5 +83,15 @@ export async function checkExpiredRentals() {
         console.log(`Checked ${expiredProducts.length} expired rentals`);
     } catch (error) {
         console.error("Error checking expired rentals:", error);
+    }
+}
+
+export async function product_all_get(req, res) {
+    try {
+        const products = await Product.find();
+        res.status(200).json({ products });
+    } catch (error) {
+        const msg = handleErrors(error.message);
+        res.status(500).json({ error: msg });
     }
 }
