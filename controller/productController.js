@@ -1,4 +1,5 @@
 import Product from "../Models/Product.js";
+import User from "../Models/User.js";
 const handleErrors = (err) => {
     if (err.includes("E11000")) {
         return "product name already exists";
@@ -63,10 +64,13 @@ export async function product_rent_post(req, res) {
         returnDate.setDate(returnDate.getDate() + parseInt(days));
         product.returnDate = returnDate;
         product.popularity += 1;
-        const user = (product.available = false);
+        product.available = false;
         product.rentedBy = userId;
         product.rentedFor = days;
         await product.save();
+        const user = await User.findById(userId);
+        user.rentedProducts.push(product._id);
+        await user.save();
         res.status(200).json({ product });
     } catch (error) {
         const msg = handleErrors(error.message);
