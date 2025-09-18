@@ -6,9 +6,15 @@ import User from "./Models/User.js";
 import productRouter from "./controller/productRoutes.js";
 import { checkExpiredRentals } from "./controller/productController.js";
 import Product from "./Models/Product.js";
+import fs from "fs";
+
 dotenv.config();
 const app = express();
-
+const PORT = process.env.PORT || 3000;
+const uploadDir = "./uploads";
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
 app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/products", productRouter);
@@ -130,8 +136,9 @@ mongoose
     .then(async (result) => {
         await seedAdmin();
         await seedProducts();
-        app.listen(3000);
-        console.log("http://localhost:3000");
+        app.listen(PORT, () => {
+            console.log(`Server is running on http://localhost:${PORT}`);
+        });
         setInterval(checkExpiredRentals, 60 * 60 * 1000);
     })
     .catch((err) => {
