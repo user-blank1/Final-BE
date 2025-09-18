@@ -27,7 +27,6 @@ export async function signup_post(req, res) {
 
 export async function login_post(req, res) {
     const { username, password } = req.body;
-    console.log("Login attempt:", username);
     try {
         const user = await User.login(username, password);
         const token = createToken(user._id);
@@ -44,4 +43,11 @@ export async function login_post(req, res) {
 export async function logout_get(req, res) {
     res.cookie("jwt", "", { maxAge: 1 });
     res.status(200).json({ message: "Logged out successfully" });
+}
+
+export async function get_user_products(req, res) {
+    const userId = req.params.userId;
+    const user = await User.findById(userId).populate("rentedProducts");
+    const products = user.rentedProducts;
+    res.status(200).json({ products });
 }
