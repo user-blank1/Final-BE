@@ -7,12 +7,19 @@ const handleErrors = (err) => {
     }
 };
 export async function product_post(req, res) {
-    const { productName, productDescription, productPrice, available } = req.body;
+    const { productName, productDescription, productPrice, available, popularity } = req.body;
 
     const productImage = req.file.path;
 
     try {
-        const product = await Product.create({ name: productName, description: productDescription, price: productPrice, imageUrl: productImage, available });
+        const product = await Product.create({
+            name: productName,
+            description: productDescription,
+            price: productPrice,
+            imageUrl: productImage,
+            available,
+            popularity,
+        });
         res.status(201).json({ product });
     } catch (error) {
         console.log(error.message);
@@ -24,6 +31,7 @@ export async function product_post(req, res) {
 export async function product_popular_get(req, res) {
     try {
         const products = await Product.find().sort({ popularity: -1 }).limit(3);
+        console.log(products);
         res.status(200).json({ products });
     } catch (err) {
         res.status(500).json({ err });
