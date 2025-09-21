@@ -51,7 +51,10 @@ export async function product_get(req, res) {
 }
 
 export async function product_rent_post(req, res) {
-    const { productTitle, days, userId } = req.body;
+    const { productTitle, days, minutes, userId } = req.body;
+    if (!productTitle || (!days && days !== 0) || !userId) {
+        return res.status(400).json({ error: "Missing required fields" });
+    }
     try {
         const product = await Product.findOne({ name: productTitle });
         if (!product) {
@@ -62,6 +65,7 @@ export async function product_rent_post(req, res) {
         }
         const returnDate = new Date();
         returnDate.setDate(returnDate.getDate() + parseInt(days));
+        returnDate.setMinutes(returnDate.getMinutes() + parseInt(minutes));
         product.returnDate = returnDate;
         product.popularity += 1;
         product.available = false;
@@ -90,6 +94,11 @@ export async function checkExpiredRentals() {
             product.rentedFor = 0;
             product.returnDate = null;
             await product.save();
+            const user = await User.findOne({ rentedProducts: product._id });
+            if (user) {
+                user.rentedProducts = user.rentedProducts.filter((prodId) => !prodId.equals(product._id));
+                await user.save();
+            }
         }
 
         console.log(`Checked ${expiredProducts.length} expired rentals`);
