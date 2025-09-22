@@ -32,7 +32,6 @@ export async function product_post(req, res) {
 export async function product_popular_get(req, res) {
     try {
         const products = await Product.find().sort({ popularity: -1 }).limit(3);
-        console.log(products);
         res.status(200).json({ products });
     } catch (err) {
         res.status(500).json({ err });
@@ -114,5 +113,32 @@ export async function product_all_get(req, res) {
     } catch (error) {
         const msg = handleErrors(error.message);
         res.status(500).json({ error: msg });
+    }
+}
+
+export async function product_delete(req, res) {
+    const productId = req.params.id;
+
+    try {
+        const product = await Product.findById(productId);
+        product.rentedBy = null;
+        product.available = true;
+        product.rentedFor = 0;
+        if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+        }
+        res.status(200).json({ message: "Product deleted successfully" });
+    } catch (error) {
+        const msg = handleErrors(error.message);
+        res.status(500).json({ error: msg });
+    }
+    try {
+        const user = await User.findOne({
+            rentedProducts: { $in: [productId] },
+        });
+        user.rentedProducts = user.rentedProducts.filter((prodId) => !prodId.equals(productId));
+        await user.save();
+    } catch (error) {
+        res.status(500).json({ error: "Failed to update user rented products" });
     }
 }
