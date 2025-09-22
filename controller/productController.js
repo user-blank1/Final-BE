@@ -31,7 +31,7 @@ export async function product_post(req, res) {
 
 export async function product_popular_get(req, res) {
     try {
-        const products = await Product.find().sort({ popularity: -1 }).limit(3);
+        const products = await Product.find({ draft: false }).sort({ popularity: -1 }).limit(3);
         res.status(200).json({ products });
     } catch (err) {
         res.status(500).json({ err });
@@ -61,6 +61,9 @@ export async function product_rent_post(req, res) {
         }
         if (product.rentedBy) {
             return res.status(400).json({ error: "Product is already rented" });
+        }
+        if (product.draft) {
+            return res.status(400).json({ error: "Product is not available for rent" });
         }
         const returnDate = new Date();
         returnDate.setDate(returnDate.getDate() + parseInt(days));
@@ -107,6 +110,15 @@ export async function checkExpiredRentals() {
 }
 
 export async function product_all_get(req, res) {
+    try {
+        const products = await Product.find({ draft: false });
+        res.status(200).json({ products });
+    } catch (error) {
+        const msg = handleErrors(error.message);
+        res.status(500).json({ error: msg });
+    }
+}
+export async function product_all_get_admin(req, res) {
     try {
         const products = await Product.find();
         res.status(200).json({ products });
@@ -169,6 +181,9 @@ export async function edit_product_title(req, res) {
         if (!product) {
             return res.status(404).json({ error: "Product not found" });
         }
+        if (product.rentedBy) {
+            return res.status(400).json({ error: "Cannot change draft status of a rented product" });
+        }
         product.name = newTitle;
         await product.save();
         res.status(200).json({ message: "Product title updated successfully" });
@@ -187,6 +202,9 @@ export async function edit_product_description(req, res) {
         const product = await Product.findById(productId);
         if (!product) {
             return res.status(404).json({ error: "Product not found" });
+        }
+        if (product.rentedBy) {
+            return res.status(400).json({ error: "Cannot change draft status of a rented product" });
         }
         product.description = newDescription;
         await product.save();
@@ -207,7 +225,9 @@ export async function edit_product_price(req, res) {
         if (!product) {
             return res.status(404).json({ error: "Product not found" });
         }
-
+        if (product.rentedBy) {
+            return res.status(400).json({ error: "Cannot change draft status of a rented product" });
+        }
         if (isNaN(newPrice) || newPrice <= 0) {
             return res.status(400).json({ error: "Price must be a positive number" });
         }
@@ -215,6 +235,29 @@ export async function edit_product_price(req, res) {
         product.price = newPrice;
         await product.save();
         res.status(200).json({ message: "Product price updated successfully" });
+    } catch (error) {
+        console.log(error);
+        const msg = handleErrors(error.message);
+        res.status(500).json({ error: msg });
+    }
+}
+export async function edit_product_draft(req, res) {
+    const productId = req.params.id;
+
+    try {
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+        }
+        if (product.rentedBy) {
+            return res.status(400).json({ error: "Cannot change draft status of a rented product" });
+        }
+        product.draft = !product.draft;
+        await product.save();
+        res.status(200).json({
+            message: `success`,
+            product,
+        });
     } catch (error) {
         console.log(error);
         const msg = handleErrors(error.message);

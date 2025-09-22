@@ -9,6 +9,7 @@ const productSchema = new mongoose.Schema({
     rentedFor: { type: Number, default: 0 },
     popularity: { type: Number, default: 0 },
     returnDate: { type: Date, default: null },
+    draft: { type: Boolean, default: false },
 });
 
 const Product = mongoose.model("Product", productSchema, "products");
