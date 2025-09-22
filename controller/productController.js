@@ -142,3 +142,82 @@ export async function product_delete(req, res) {
         res.status(500).json({ error: "Failed to update user rented products" });
     }
 }
+
+export async function admin_delete(req, res) {
+    const productId = req.params.id;
+
+    try {
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+        }
+        await Product.findByIdAndDelete(productId);
+        res.status(200).json({ message: "Product deleted successfully" });
+    } catch (error) {
+        const msg = handleErrors(error.message);
+        res.status(500).json({ error: msg });
+    }
+}
+
+export async function edit_product_title(req, res) {
+    const productId = req.params.id;
+    const { newTitle } = req.body;
+    console.log(newTitle, productId);
+    try {
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+        }
+        product.name = newTitle;
+        await product.save();
+        res.status(200).json({ message: "Product title updated successfully" });
+    } catch (error) {
+        console.log(error);
+        const msg = handleErrors(error.message);
+        res.status(500).json({ error: msg });
+    }
+}
+
+export async function edit_product_description(req, res) {
+    const productId = req.params.id;
+    const { newDescription } = req.body;
+    console.log(newDescription, productId);
+    try {
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+        }
+        product.description = newDescription;
+        await product.save();
+        res.status(200).json({ message: "Product description updated successfully" });
+    } catch (error) {
+        console.log(error);
+        const msg = handleErrors(error.message);
+        res.status(500).json({ error: msg });
+    }
+}
+
+export async function edit_product_price(req, res) {
+    const productId = req.params.id;
+    const { newPrice } = req.body;
+    console.log(newPrice, productId);
+    try {
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+        }
+
+        if (isNaN(newPrice) || newPrice <= 0) {
+            return res.status(400).json({ error: "Price must be a positive number" });
+        }
+
+        product.price = newPrice;
+        await product.save();
+        res.status(200).json({ message: "Product price updated successfully" });
+    } catch (error) {
+        console.log(error);
+        const msg = handleErrors(error.message);
+        res.status(500).json({ error: msg });
+    }
+}
