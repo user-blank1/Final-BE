@@ -46,7 +46,7 @@ async function seedProducts() {
 
     const sampleProducts = [
         {
-            name: "Hammer small",
+            name: "Hammer medium",
             description: "Professional chammer with multiple speed settings",
             price: 25,
             imageUrl: "uploads/hammer1.png",
@@ -54,8 +54,8 @@ async function seedProducts() {
             popularity: 15,
         },
         {
-            name: "Lawn medium",
-            description: "A large hammer specifically designed for BIG nails",
+            name: "hammer large",
+            description: "A large hammer specifically designed for construction work.",
             price: 40,
             imageUrl: "uploads/hammer2.png",
             available: true,
