@@ -8,6 +8,12 @@ const createToken = (id) => {
 export async function signup_post(req, res) {
     const { username, email, password } = req.body;
     try {
+        let userExists = await User.findOne({ email });
+        let usernameExists = await User.findOne({ username });
+
+        if (userExists || usernameExists) {
+            throw new Error("User already exists");
+        }
         const user = await User.create({ email, username, password });
         let token;
         try {
@@ -50,7 +56,6 @@ export async function get_user_products(req, res) {
     const userId = req.params.userId;
     const user = await User.findById(userId).populate("rentedProducts");
     const products = user.rentedProducts;
-    console.log("!");
     res.status(200).json({ products });
 }
 export async function get_all_users(req, res) {

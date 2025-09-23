@@ -12,6 +12,8 @@ import { edit_product_description } from "../controller/productController.js";
 import { edit_product_price } from "../controller/productController.js";
 import { edit_product_draft } from "../controller/productController.js";
 import { product_all_get_admin } from "../controller/productController.js";
+import { get_rezervations } from "../controller/productController.js";
+import { edit_product_return_date } from "../controller/productController.js";
 import multer from "multer";
 
 const productRouter = Router();
@@ -38,5 +40,6 @@ productRouter.put("/edit/title/:id", requireAuth, edit_product_title);
 productRouter.put("/edit/description/:id", requireAuth, edit_product_description);
 productRouter.put("/edit/price/:id", requireAuth, edit_product_price);
 productRouter.put("/edit/draft/:id", requireAuth, edit_product_draft);
-
+productRouter.get("/rezervations", requireAuth, get_rezervations);
+productRouter.put("/edit/returndate/:id", requireAuth, edit_product_return_date);
 export default productRouter;

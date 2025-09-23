@@ -54,6 +54,9 @@ export async function product_rent_post(req, res) {
     if (!productTitle || (!days && days !== 0) || !userId) {
         return res.status(400).json({ error: "Missing required fields" });
     }
+    if (days <= 0 && minutes <= 0) {
+        return res.status(400).json({ error: "Days or minutes must be greater than zero" });
+    }
     try {
         const product = await Product.findOne({ name: productTitle });
         if (!product) {
@@ -164,6 +167,9 @@ export async function admin_delete(req, res) {
         if (!product) {
             return res.status(404).json({ error: "Product not found" });
         }
+        if (product.rentedBy) {
+            return res.status(400).json({ error: "Cannot delete a rented product" });
+        }
         await Product.findByIdAndDelete(productId);
         res.status(200).json({ message: "Product deleted successfully" });
     } catch (error) {
@@ -182,7 +188,7 @@ export async function edit_product_title(req, res) {
             return res.status(404).json({ error: "Product not found" });
         }
         if (product.rentedBy) {
-            return res.status(400).json({ error: "Cannot change draft status of a rented product" });
+            return res.status(400).json({ error: "Cannot change title of a rented product" });
         }
         product.name = newTitle;
         await product.save();
@@ -204,7 +210,7 @@ export async function edit_product_description(req, res) {
             return res.status(404).json({ error: "Product not found" });
         }
         if (product.rentedBy) {
-            return res.status(400).json({ error: "Cannot change draft status of a rented product" });
+            return res.status(400).json({ error: "Cannot change description of a rented product" });
         }
         product.description = newDescription;
         await product.save();
@@ -226,7 +232,7 @@ export async function edit_product_price(req, res) {
             return res.status(404).json({ error: "Product not found" });
         }
         if (product.rentedBy) {
-            return res.status(400).json({ error: "Cannot change draft status of a rented product" });
+            return res.status(400).json({ error: "Cannot change price of a rented product" });
         }
         if (isNaN(newPrice) || newPrice <= 0) {
             return res.status(400).json({ error: "Price must be a positive number" });
@@ -258,6 +264,37 @@ export async function edit_product_draft(req, res) {
             message: `success`,
             product,
         });
+    } catch (error) {
+        console.log(error);
+        const msg = handleErrors(error.message);
+        res.status(500).json({ error: msg });
+    }
+}
+
+export async function get_rezervations(req, res) {
+    try {
+        const products = await Product.find({ rentedBy: { $ne: null } }).populate("rentedBy", "username email");
+        res.status(200).json({ products });
+    } catch (error) {
+        const msg = handleErrors(error.message);
+        res.status(500).json({ error: msg });
+    }
+}
+export async function edit_product_return_date(req, res) {
+    const productId = req.params.id;
+    const { newReturnDate } = req.body;
+    try {
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+        }
+        if (product.rentedBy) {
+            product.returnDate = new Date(newReturnDate);
+            await product.save();
+            return res.status(200).json({ message: "Return date updated successfully", product });
+        } else {
+            return res.status(400).json({ error: "Product is not currently rented" });
+        }
     } catch (error) {
         console.log(error);
         const msg = handleErrors(error.message);
