@@ -7,6 +7,7 @@ import productRouter from "./controller/productRoutes.js";
 import { checkExpiredRentals } from "./controller/productController.js";
 import Product from "./Models/Product.js";
 import fs from "fs";
+import cors from "cors";
 
 dotenv.config();
 const app = express();
@@ -19,6 +20,12 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/products", productRouter);
 app.use("/uploads", express.static("uploads"));
+app.use(
+    cors({
+        origin: ["https://final-fe-production.up.railway.app"],
+        credentials: true,
+    })
+);
 async function seedAdmin() {
     const adminExists = await User.findOne({ username: "admin" });
     if (adminExists) {
@@ -46,18 +53,18 @@ async function seedProducts() {
 
     const sampleProducts = [
         {
-            name: "Hammer medium",
-            description: "Professional chammer with multiple speed settings",
+            name: "Dehumidifier 3000",
+            description: "Professional dehumidifier with multiple speed settings",
             price: 25,
-            imageUrl: "uploads/hammer1.png",
+            imageUrl: "uploads/img1.png",
             available: true,
             popularity: 15,
         },
         {
-            name: "hammer large",
-            description: "A large hammer specifically designed for construction work.",
+            name: "Foundation forming machine",
+            description: "Makes the ground even and ready for construction.",
             price: 40,
-            imageUrl: "uploads/hammer2.png",
+            imageUrl: "uploads/img2.png",
             available: true,
             popularity: 22,
         },
@@ -65,59 +72,59 @@ async function seedProducts() {
             name: "toolset 1",
             description: "Many tools in one for all manual work needs.",
             price: 35,
-            imageUrl: "uploads/toolset1.png",
+            imageUrl: "uploads/img3.png",
             available: true,
             popularity: 18,
         },
         {
-            name: "toolset 2",
-            description: "A complete set of tools for all your DIY projects.",
+            name: "Excavator 5000",
+            description: "A heavy-duty excavator for large construction projects.",
             price: 30,
-            imageUrl: "uploads/toolset2.png",
+            imageUrl: "uploads/img4.png",
             available: true,
             popularity: 12,
         },
         {
-            name: "toolset 3",
-            description: "A versatile toolset for all your home improvement needs.",
+            name: "Fridge",
+            description: "A large fridge for storing food and drinks.",
             price: 60,
-            imageUrl: "uploads/toolset3.png",
+            imageUrl: "uploads/img5.png",
             available: true,
             rentedBy: null,
             popularity: 25,
         },
         {
-            name: "Lawnmower Pro X200",
-            description: "A powerful lawnmower for professional landscaping.",
+            name: "Air Conditioner Pro",
+            description: "A powerful air conditioner for professional cooling.",
             price: 60,
-            imageUrl: "uploads/lawnmower.png",
+            imageUrl: "uploads/img6.png",
             available: true,
             rentedBy: null,
             popularity: 15,
         },
         {
-            name: "Generator ZX500",
-            description: "A powerful generator for backup power and outdoor events.",
+            name: "Tower",
+            description: "This tower lifts people to great heights.",
             price: 60,
-            imageUrl: "uploads/generator.png",
+            imageUrl: "uploads/img7.png",
             available: true,
             rentedBy: null,
             popularity: 15,
         },
         {
-            name: "Hose Reel Deluxe",
-            description: "A premium hose reel for easy watering.",
+            name: "Generator X100",
+            description: "A premium generator for backup power.",
             price: 60,
-            imageUrl: "uploads/hose.png",
+            imageUrl: "uploads/img8.png",
             available: true,
             rentedBy: null,
             popularity: 15,
         },
         {
-            name: "Drill Master 3000",
-            description: "A powerful drill for professional use.",
+            name: "Wood chopper 2000",
+            description: "A powerful wood chopper for professional use.",
             price: 60,
-            imageUrl: "uploads/drill.png",
+            imageUrl: "uploads/img9.png",
             available: true,
             rentedBy: null,
             popularity: 15,
