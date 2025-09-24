@@ -16,16 +16,17 @@ const uploadDir = "./uploads";
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
-app.use(express.json());
-app.use("/api/auth", authRouter);
-app.use("/api/products", productRouter);
-app.use("/uploads", express.static("uploads"));
 app.use(
     cors({
         origin: ["https://final-fe-production.up.railway.app"],
         credentials: true,
     })
 );
+app.use(express.json());
+app.use("/api/auth", authRouter);
+app.use("/api/products", productRouter);
+app.use("/uploads", express.static("uploads"));
+
 async function seedAdmin() {
     const adminExists = await User.findOne({ username: "admin" });
     if (adminExists) {
