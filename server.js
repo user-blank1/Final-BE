@@ -7,6 +7,7 @@ import productRouter from "./controller/productRoutes.js";
 import { checkExpiredRentals } from "./controller/productController.js";
 import Product from "./Models/Product.js";
 import fs from "fs";
+import cors from "cors";
 
 dotenv.config();
 const app = express();
@@ -19,6 +20,12 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/products", productRouter);
 app.use("/uploads", express.static("uploads"));
+app.use(
+    cors({
+        origin: ["https://final-fe-production.up.railway.app"],
+        credentials: true,
+    })
+);
 async function seedAdmin() {
     const adminExists = await User.findOne({ username: "admin" });
     if (adminExists) {
