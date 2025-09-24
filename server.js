@@ -41,7 +41,7 @@ async function seedAdmin() {
     });
 
     await admin.save();
-    console.log("Admin user created!");
+    console.log("Admin user created!!");
 }
 
 async function seedProducts() {
