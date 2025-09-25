@@ -18,7 +18,7 @@ if (!fs.existsSync(uploadDir)) {
 }
 app.use(
     cors({
-        origin: ["https://final-fe-production.up.railway.app"],
+        origin: ["https://final-fe-production.up.railway.app", "http://localhost:5174"],
         credentials: true,
     })
 );
