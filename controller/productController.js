@@ -136,9 +136,11 @@ export async function product_delete(req, res) {
 
     try {
         const product = await Product.findById(productId);
+        console.log(product);
         product.rentedBy = null;
         product.available = true;
         product.rentedFor = 0;
+        await product.save();
         if (!product) {
             return res.status(404).json({ error: "Product not found" });
         }
