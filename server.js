@@ -147,7 +147,7 @@ mongoose
         app.listen(PORT, () => {
             console.log(`Server is running on http://localhost:${PORT}`);
         });
-        setInterval(checkExpiredRentals, 60 * 1000);
+        setInterval(checkExpiredRentals, 10 * 1000);
     })
     .catch((err) => {
         console.error("Database connection error:", err);
